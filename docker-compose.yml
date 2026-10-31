@@ -1,0 +1,60 @@
+services:
+  cloudmaker:
+    build: .
+    container_name: cloudmaker
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "807:807"
+    volumes:
+      - /var/run/libvirt:/var/run/libvirt
+      - ./vms:/app/vms
+      - ./tmp:/app/tmp
+      - /home/bobrik/libvirt-images:/app/tmp
+    networks:
+      - cloudmaker
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: cloudmaker-prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      - cloudmaker
+    networks:
+      - cloudmaker
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    container_name: cloudmaker-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/cloudmaker.json
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - cloudmaker
+
+volumes:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  cloudmaker:
+    driver: bridge
