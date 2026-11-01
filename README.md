@@ -8,7 +8,6 @@
 - создание VM с cloud-init ISO, CPU, RAM и диском из базового cloud-образа;
 - список VM, пауза, продолжение, удаление, сохранение;
 - метрики `/metrics` и готовый дашборд Grafana;
-- cloud-init, который устанавливает и запускает Chocolate Doom;
 - скрипт очистки всех созданных ресурсов.
 
 Домашнее задание: пункты 1, 2, 4, 6, 7, 8, 9, 10, 11, 12.
@@ -20,11 +19,19 @@ Go, libvirt/QEMU, Docker Compose, Prometheus, Grafana, cloud-init.
 ## Запуск
 
 ```bash
-# 1. Базовый cloud-образ (нужен для загрузки VM)
-./cloud-init/doom/get-base-image.sh
+#1. установить что надо
+sudo apt-get install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager libvirt-dev
 
-# 2. ISO с cloud-init для Doom (опционально)
-./cloud-init/doom/build.sh
+# 2. добавить kvm и libvirt в нужную группу
+sudo adduser `id -un` libvirt
+
+sudo adduser `id -un` kvm
+
+# 3. Создать каталог для сохранения cloud-init и выдать libvirt нужные права
+
+mkdir -p /home/bobrik/libvirt-images
+sudo setfacl -m u:libvirt-qemu:x /home/bobrik
+sudo setfacl -m u:libvirt-qemu:x /home/bobrik/libvirt-images
 
 # 3. Весь стек
 docker compose up -d --build
@@ -34,35 +41,13 @@ docker compose up -d --build
 - Grafana: http://localhost:3000 — `admin` / `admin`
 - Prometheus: http://localhost:9090
 
-## Doom
-
-В панели создай VM с памятью от 1024 MiB и ISO
-`cloud-init/doom/doom-cloud-init.iso`. После запуска узнай VNC-порт:
-
-```bash
-virsh vncdisplay <имя-vm>
-```
-
-Cloud-init установит Chocolate Doom и shareware WAD, затем запустит игру.
-Подключись любым VNC-клиентом к `127.0.0.1:<порт>`.
-
-## Настройки
-
-| Переменная | По умолчанию | Назначение |
-|---|---|---|
-| `CLOUDMAKER_IMAGE_DIR` | `/home/bobrik/libvirt-images` | ISO и диски VM |
-| `CLOUDMAKER_BASE_IMAGE` | `.../ubuntu-base.qcow2` | базовый cloud-образ |
-| `CLOUDMAKER_DISK_SIZE` | `10G` | размер диска VM |
-
-Каталог образов должен быть доступен контейнеру и хосту libvirt по одному и тому же пути.
-
 ## Структура
 
 - `main.go` — HTTP API и управление libvirt;
 - `web/` — веб-интерфейс;
 - `monitoring/` — Prometheus и Grafana;
-- `cloud-init/doom/` — демо cloud-init;
 - `cleanup.sh` — удаление контейнеров, VM, дисков и данных.
+- `cloud-init.iso` — тестировочный cloud-init
 
 ## Очистка
 

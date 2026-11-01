@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CloudMaker</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1120;
+      --panel: #111a2e;
+      --panel-2: #16223b;
+      --border: #263553;
+      --text: #e6edf7;
+      --muted: #8fa3c2;
+      --accent: #4f8cff;
+      --accent-hover: #6ba0ff;
+      --green: #35c48a;
+      --amber: #f0b429;
+      --red: #f05d5e;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 10% -10%, #1b3566 0, transparent 35%),
+        radial-gradient(circle at 100% 0, #163d38 0, transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 34px 24px 18px;
+    }
+
+    h1, h2, p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 28px;
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      font-size: 18px;
+      letter-spacing: -0.01em;
+    }
+
+    .subtitle,
+    .muted {
+      color: var(--muted);
+    }
+
+    .subtitle {
+      margin-top: 3px;
+      font-size: 14px;
+    }
+
+    nav {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 13px;
+      font-size: 13px;
+      transition: 0.15s ease;
+    }
+
+    nav a:hover {
+      color: var(--text);
+      border-color: #3b5480;
+      background: var(--panel);
+    }
+
+    main {
+      display: grid;
+      gap: 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px 48px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent), var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+      overflow: hidden;
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-body {
+      padding: 20px 22px 22px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      align-items: end;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    label.wide {
+      grid-column: span 2;
+    }
+
+    input {
+      width: 100%;
+      height: 42px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--panel-2);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition: 0.15s ease;
+    }
+
+    input[type="file"] {
+      padding: 9px 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    input[type="file"]::file-selector-button {
+      margin-right: 10px;
+      border: 0;
+      border-radius: 7px;
+      padding: 6px 10px;
+      background: #243554;
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.16);
+    }
+
+    button {
+      height: 42px;
+      padding: 0 16px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      background: var(--accent);
+      color: #fff;
+      font: 600 14px/1 inherit;
+      cursor: pointer;
+      transition: 0.15s ease;
+      white-space: nowrap;
+    }
+
+    button:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    button.secondary {
+      background: #1c2a45;
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    button.secondary:hover:not(:disabled) {
+      background: #263858;
+    }
+
+    button.danger {
+      background: rgba(240, 93, 94, 0.14);
+      border-color: rgba(240, 93, 94, 0.42);
+      color: #ff9b9c;
+    }
+
+    button.danger:hover:not(:disabled) {
+      background: rgba(240, 93, 94, 0.24);
+    }
+
+    .submit {
+      min-width: 132px;
+    }
+
+    .hint {
+      grid-column: 1 / -1;
+      margin-top: -2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .notice {
+      margin: 0 22px 18px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 13px;
+      background: var(--panel-2);
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .notice.success {
+      border-color: rgba(53, 196, 138, 0.45);
+      background: rgba(53, 196, 138, 0.1);
+    }
+
+    .notice.error {
+      border-color: rgba(240, 93, 94, 0.45);
+      background: rgba(240, 93, 94, 0.1);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 13px 22px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.018);
+    }
+
+    .mono {
+      font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+      font-size: 13px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .badge::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .state-1 {
+      color: var(--green);
+      border-color: rgba(53, 196, 138, 0.35);
+      background: rgba(53, 196, 138, 0.08);
+    }
+
+    .state-3 {
+      color: var(--amber);
+      border-color: rgba(240, 180, 41, 0.35);
+      background: rgba(240, 180, 41, 0.08);
+    }
+
+    .state-5,
+    .state-0 {
+      color: var(--muted);
+    }
+
+    .state-6,
+    .state--1 {
+      color: var(--red);
+      border-color: rgba(240, 93, 94, 0.35);
+      background: rgba(240, 93, 94, 0.08);
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      height: 34px;
+      padding: 0 12px;
+      font-size: 13px;
+    }
+
+    .empty {
+      padding: 34px 22px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 860px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      nav {
+        justify-content: flex-start;
+      }
+
+      form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .submit {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .topbar,
+      main {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      form {
+        grid-template-columns: 1fr;
+      }
+
+      label.wide,
+      .submit {
+        grid-column: auto;
+      }
+
+      th,
+      td {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>CloudMaker</h1>
+      <p class="subtitle">Управление виртуальными машинами</p>
+    </div>
+    <nav>
+      <a href="#" data-port="3000" target="_blank" rel="noreferrer">Grafana</a>
+      <a href="#" data-port="9090" target="_blank" rel="noreferrer">Prometheus</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="card-head">
+        <h2>Создать виртуальную машину</h2>
+      </div>
+      <div class="card-body">
+        <form id="create-form">
+          <label>
+            Имя
+            <input name="name" required pattern="[A-Za-z0-9][A-Za-z0-9_.-]*"
+                   title="Буквы, цифры, точка, дефис и подчёркивание" autocomplete="off">
+          </label>
+          <label>
+            vCPU
+            <input name="cpu" type="number" min="1" step="1" value="1" required>
+          </label>
+          <label>
+            Память, MiB
+            <input name="memory" type="number" min="128" step="128" value="512" required>
+          </label>
+          <label>
+            TCP-порты
+            <input name="ports" placeholder="22, 80, 443" autocomplete="off">
+          </label>
+          <label class="wide">
+            cloud-init ISO
+            <input name="cloud-init.iso" type="file" accept=".iso,application/octet-stream" required>
+          </label>
+          <div></div>
+          <button class="submit" type="submit">Создать</button>
+          <p class="hint">Порты пробрасываются через passt и указываются через запятую.</p>
+        </form>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <h2>Виртуальные машины</h2>
+          <span id="vm-count" class="muted"></span>
+        </div>
+        <div class="toolbar">
+          <button id="refresh" class="secondary" type="button">Обновить</button>
+          <button id="save" class="secondary" type="button">Сохранить</button>
+        </div>
+      </div>
+      <div id="notice" class="notice" hidden></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Имя</th>
+              <th>Состояние</th>
+              <th>vCPU</th>
+              <th>Память</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="vm-list">
+            <tr><td colspan="5" class="empty">Загрузка...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const stateNames = {
+      0: "нет состояния",
+      1: "работает",
+      2: "заблокирована",
+      3: "пауза",
+      4: "выключение",
+      5: "выключена",
+      6: "авария",
+      7: "сон",
+      "-1": "не найдена"
+    };
+
+    const createForm = document.getElementById("create-form");
+    const vmList = document.getElementById("vm-list");
+    const vmCount = document.getElementById("vm-count");
+    const notice = document.getElementById("notice");
+    const refreshButton = document.getElementById("refresh");
+    const saveButton = document.getElementById("save");
+    let noticeTimer = null;
+
+    document.querySelectorAll("a[data-port]").forEach((link) => {
+      link.href = `${location.protocol}//${location.hostname}:${link.dataset.port}`;
+    });
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[char]));
+    }
+
+    function formatBytes(value) {
+      if (!value || value < 0) {
+        return "—";
+      }
+      const units = ["Б", "КиБ", "МиБ", "ГиБ", "ТиБ"];
+      let number = Number(value);
+      let unit = 0;
+      while (number >= 1024 && unit < units.length - 1) {
+        number /= 1024;
+        unit++;
+      }
+      return `${number.toFixed(unit === 0 || number >= 10 ? 0 : 1)} ${units[unit]}`;
+    }
+
+    function notify(text, type = "info") {
+      clearTimeout(noticeTimer);
+      notice.textContent = text;
+      notice.className = `notice ${type}`;
+      notice.hidden = false;
+      noticeTimer = setTimeout(() => {
+        notice.hidden = true;
+      }, 5000);
+    }
+
+    async function request(url, options) {
+      const response = await fetch(url, options);
+      const text = await response.text();
+      if (!response.ok) {
+        throw new Error(text.trim() || `HTTP ${response.status}`);
+      }
+      return text;
+    }
+
+    function renderVMs(vms) {
+      vmCount.textContent = vms.length ? `${vms.length} шт.` : "";
+
+      if (!vms.length) {
+        vmList.innerHTML = '<tr><td colspan="5" class="empty">Виртуальных машин нет</td></tr>';
+        return;
+      }
+
+      vmList.innerHTML = vms.map((vm) => {
+        const state = stateNames[vm.state_code] || vm.state || "неизвестно";
+        const name = escapeHtml(vm.name);
+        const actions = [];
+
+        if (vm.state_code === 1) {
+          actions.push(`<button class="secondary" data-action="suspend" data-name="${name}">Пауза</button>`);
+        }
+        if (vm.state_code === 3) {
+          actions.push(`<button class="secondary" data-action="resume" data-name="${name}">Продолжить</button>`);
+        }
+        actions.push(`<button class="danger" data-action="kill" data-name="${name}">Удалить</button>`);
+
+        return `
+          <tr>
+            <td class="mono">${name}</td>
+            <td><span class="badge state-${vm.state_code}">${escapeHtml(state)}</span></td>
+            <td>${vm.cpus || "—"}</td>
+            <td>${formatBytes(vm.memory_bytes)}</td>
+            <td><div class="actions">${actions.join("")}</div></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function loadVMs() {
+      try {
+        const response = await fetch("/api/vms", { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+        renderVMs(await response.json());
+      } catch (error) {
+        notify(`Не удалось получить список VM: ${error.message}`, "error");
+      }
+    }
+
+    vmList.addEventListener("click", async (event) => {
+      const button = event.target.closest("button[data-action]");
+      if (!button) {
+        return;
+      }
+
+      const action = button.dataset.action;
+      const name = button.dataset.name;
+      if (action === "kill" && !confirm(`Удалить виртуальную машину "${name}"?`)) {
+        return;
+      }
+
+      const endpoints = {
+        suspend: "/suspend_vm",
+        resume: "/resume_vm",
+        kill: "/kill_vm"
+      };
+
+      button.disabled = true;
+      try {
+        await request(`${endpoints[action]}?name=${encodeURIComponent(name)}`);
+        notify(action === "kill" ? `VM "${name}" удалена` : `Команда для "${name}" выполнена`, "success");
+        await loadVMs();
+      } catch (error) {
+        notify(error.message, "error");
+        button.disabled = false;
+      }
+    });
+
+    createForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const submit = createForm.querySelector('button[type="submit"]');
+      const data = new FormData(createForm);
+      const params = new URLSearchParams({
+        name: String(data.get("name") || "").trim(),
+        cpu: String(data.get("cpu") || "1"),
+        memory: String(data.get("memory") || "512"),
+        ports: String(data.get("ports") || "").trim()
+      });
+
+      submit.disabled = true;
+      submit.textContent = "Создание...";
+      try {
+        const result = await request(`/create?${params.toString()}`, {
+          method: "POST",
+          body: data
+        });
+        notify(result.trim() || "Виртуальная машина создана", "success");
+        createForm.reset();
+        await loadVMs();
+      } catch (error) {
+        notify(error.message, "error");
+      } finally {
+        submit.disabled = false;
+        submit.textContent = "Создать";
+      }
+    });
+
+    refreshButton.addEventListener("click", loadVMs);
+
+    saveButton.addEventListener("click", async () => {
+      if (!confirm("Сохранить список VM? Текущая реализация Save_vms ставит все VM на паузу.")) {
+        return;
+      }
+      saveButton.disabled = true;
+      try {
+        const result = await request("/save");
+        notify(result.trim() || "Список сохранён", "success");
+        await loadVMs();
+      } catch (error) {
+        notify(error.message, "error");
+      } finally {
+        saveButton.disabled = false;
+      }
+    });
+
+    loadVMs();
+    setInterval(() => {
+      if (!document.hidden) {
+        loadVMs();
+      }
+    }, 5000);
+  </script>
+</body>
+</html>
