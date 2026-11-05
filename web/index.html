@@ -435,17 +435,12 @@
             Память, MiB
             <input name="memory" type="number" min="128" step="128" value="512" required>
           </label>
-          <label>
-            TCP-порты
-            <input name="ports" placeholder="22, 80, 443" autocomplete="off">
-          </label>
           <label class="wide">
             cloud-init ISO
             <input name="cloud-init.iso" type="file" accept=".iso,application/octet-stream" required>
           </label>
           <div></div>
           <button class="submit" type="submit">Создать</button>
-          <p class="hint">Порты пробрасываются через passt и указываются через запятую.</p>
         </form>
       </div>
     </section>
