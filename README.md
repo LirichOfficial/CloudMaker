@@ -32,6 +32,7 @@ sudo adduser `id -un` kvm
 # 3. Создать каталог для сохранения cloud-init и выдать libvirt нужные права
 
 mkdir -p ~/cloudmaker-images
+chmod 777 ~/cloudmaker-images
 
 # 3. Запуск
 docker compose up -d --build
