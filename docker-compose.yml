@@ -1,16 +1,16 @@
 services:
   cloudmaker:
+    environment:
+      CLOUDMAKER_IMAGE_DIR: ${HOME}/cloudmaker-images
     build: .
     container_name: cloudmaker
     restart: unless-stopped
     ports:
       - "8080:8080"
-      - "807:807"
     volumes:
       - /var/run/libvirt:/var/run/libvirt
       - ./vms:/app/vms
-      - ./tmp:/app/tmp
-      - /home/bobrik/libvirt-images:/app/tmp
+      - ${HOME}/cloudmaker-images:/app/tmp
     networks:
       - cloudmaker
 

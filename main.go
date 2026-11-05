@@ -225,6 +225,8 @@ func (a *App) create_vm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	imageDir := os.Getenv("CLOUDMAKER_IMAGE_DIR")
+
 	xmlConfig := fmt.Sprintf(`
 	<domain type='kvm'>
 	  <name>%v</name>
@@ -242,7 +244,7 @@ func (a *App) create_vm(w http.ResponseWriter, r *http.Request) {
       		<readonly/>
     	</disk>
 	  </devices>
-	</domain>`, name, memory, cpus, "/home/bobrik/libvirt-images/"+filename)
+	</domain>`, name, memory, cpus, imageDir+"/"+filename)
 
 	_, err = a.conn.DomainCreateXML(xmlConfig, 0)
 	if err != nil {
