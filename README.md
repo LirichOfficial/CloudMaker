@@ -22,6 +22,8 @@ Go, libvirt/QEMU, Docker Compose, Prometheus, Grafana, cloud-init.
 #1. установить что надо
 sudo apt-get install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager libvirt-dev
 
+#1.1 утсановить докер(с запуском без root)
+
 # 2. добавить kvm и libvirt в нужную группу
 sudo adduser `id -un` libvirt
 
@@ -29,11 +31,9 @@ sudo adduser `id -un` kvm
 
 # 3. Создать каталог для сохранения cloud-init и выдать libvirt нужные права
 
-mkdir -p /home/bobrik/libvirt-images
-sudo setfacl -m u:libvirt-qemu:x /home/bobrik
-sudo setfacl -m u:libvirt-qemu:x /home/bobrik/libvirt-images
+mkdir -p ~/cloudmaker-images
 
-# 3. Весь стек
+# 3. Запуск
 docker compose up -d --build
 ```
 
